@@ -1,0 +1,29 @@
+<h1 class="title">Gissa Ordet</h1>
+
+<!-- START VIEW -->
+<div *ngIf="!gameStarted && !gameOver" class="start-view">
+  <label>Speltid: </label>
+  <select [ngModel]="duration" (ngModelChange)="handleDurationChange($event)">
+    <option [value]="30">30 sekunder</option>
+    <option [value]="60">60 sekunder</option>
+    <option [value]="90">90 sekunder</option>
+  </select>
+  <button class="startBtn" (click)="startGame()">Starta Spelet</button>
+</div>
+
+<!-- GAME VIEW -->
+<div *ngIf="gameStarted" class="during-game">
+  <h2 class="word-display">{{currentWord}}</h2>
+  <p class="time-left">Tid kvar: {{timeLeft}} sek</p>
+  <p class="current-score">Poäng: {{score}}</p>
+  <button class="correct-guess" (click)="handleCorrectGuess()">Nästa ord</button>
+  <button class="pass" (click)="handlePass()">Pass</button>
+</div>
+
+<!-- GAME OVER VIEW -->
+<div *ngIf="gameOver" class="game-over">
+  <h2 class="time-end">Tiden är ute!</h2>
+  <h3 class="total-score">Total poäng: {{score}}</h3>
+  <button class="next-game" (click)="startGame()">Spela igen</button>
+  <button class="back-toBtn" (click)="backToStart()">Tillbaka till start</button>
+</div>
