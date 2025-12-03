@@ -8,7 +8,7 @@
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "serve:ssr:project": "node dist/project/server/server.mjs",
-    "predeploy": "ng build --configuration production --base-href https://github.com/TimmyBartelius/project.git",
+    "predeploy": "ng build --configuration production --base-href /project/",
     "deploy": "gh-pages -d dist/project"
   },
   "prettier": {
