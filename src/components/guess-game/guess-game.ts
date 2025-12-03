@@ -69,19 +69,19 @@ export class GuessGameComponent implements OnDestroy {
     this.startTimer();
   }
 
-  startTimer(): void {
-    if (this.timer) clearInterval(this.timer);
-
-    this.timer = setInterval(() => {
+startTimer(): void {
+  this.timer = setInterval(() => {
+    if (this.timeLeft <= 1) {
+      clearInterval(this.timer);
+      this.gameStarted = false;
+      this.gameOver = true;
+      this.timeLeft = 0;
+    } else {
       this.timeLeft--;
-      if (this.timeLeft <= 0) {
-        clearInterval(this.timer);
-        this.gameStarted = false;
-        this.gameOver = true;
-        this.timeLeft = 0;
-      }
-    }, 1000);
-  }
+    }
+  }, 1000);
+}
+
 
   handleCorrectGuess(): void {
     this.score++;
