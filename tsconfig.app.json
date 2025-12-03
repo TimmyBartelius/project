@@ -7,11 +7,10 @@
     "types": []
   },
   "files": [
-    "src/main.ts"
+    "src/main.ts",
+    "src/polyfills.ts"
   ],
-  "include": [
-    "src/**/*.ts"
-  ],
+  "include": [],
   "exclude": [
     "src/**/*.spec.ts"
   ]
