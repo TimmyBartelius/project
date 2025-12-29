@@ -8,47 +8,45 @@ import { wordsWithHints, WordWithHint } from '../../app/wordsWithHints';
   selector: 'app-guess-game',
   standalone: true,
   imports: [CommonModule, FormsModule],
-  template: `
-  <div class="container">
-<h1 class="title">Gissa Ordet</h1>
+  template: ` <div class="container">
+    <h1 class="title">Gissa Ordet</h1>
 
-<!-- Startvy -->
-<div *ngIf="!gameStarted && !gameOver" class="start-view">
-<label>Speltid: </label>
-<select class="duration-select" [(ngModel)]="duration">
-<option [value]="30">30 sekunder</option>
-<option [value]="60">60 sekunder</option>
-<option [value]="90">90 sekunder</option>
-</select>
- <button class="start-button"(click)="startGame()">Starta spelet</button>
-</div>
+    <!-- Startvy -->
+    <div *ngIf="!gameStarted && !gameOver" class="start-view">
+      <label>Speltid: </label>
+      <select class="duration-select" [(ngModel)]="duration">
+        <option [value]="30">30 sekunder</option>
+        <option [value]="60">60 sekunder</option>
+        <option [value]="90">90 sekunder</option>
+      </select>
+      <button class="start-button" (click)="startGame()">Starta spelet</button>
+    </div>
 
-<!-- Spelvy -->
-<div *ngIf="gameStarted" class="game-view">
-<h2 class="word-display">{{ currentWord }}</h2>
-<p class="time-left">Tid kvar: {{ timeLeft }} sek</p>
-<p class="current-score">Poäng: {{ score }}</p>
-<p class="hint-label">Ledtråd:</p>
-<p class="hint-text"> {{ currentHint || 'Inga ledtrådar använda'}}</p>
-<button class="hintBtn"(click)="showHint()">Visa ledtråd</button>
-<div class="gameBtns">
-<button class="correctBtn"(click)="handleCorrectGuess()">Nästa ord</button>
-<button class="passBtn"(click)="handlePass()">Pass</button>
- </div>
-</div>
+    <!-- Spelvy -->
+    <div *ngIf="gameStarted" class="game-view">
+      <h2 class="word-display">{{ currentWord }}</h2>
+      <p class="time-left">Tid kvar: {{ timeLeft }} sek</p>
+      <p class="current-score">Poäng: {{ score }}</p>
+      <p class="hint-label">Ledtråd:</p>
+      <p class="hint-text">{{ currentHint || 'Inga ledtrådar använda' }}</p>
+      <button class="hintBtn" (click)="showHint()">Visa ledtråd</button>
+      <div class="gameBtns">
+        <button class="correctBtn" (click)="handleCorrectGuess()">Nästa ord</button>
+        <button class="passBtn" (click)="handlePass()">Pass</button>
+      </div>
+    </div>
 
-<!-- Game Over -->
-<div *ngIf="gameOver" class="game-over">
-<h2>Tiden är ute!</h2>
-<h3>Total poäng: {{ score }}</h3>
- <div class="game-over-buttons">
-<button class="againBtn"(click)="startGame()">Spela igen</button>
-<button class="backBtn"(click)="backToStart()">Tillbaka till start</button>
-</div>
- </div>
-</div>`,
-styleUrls: ['./guess-game.scss']
-
+    <!-- Game Over -->
+    <div *ngIf="gameOver" class="game-over">
+      <h2>Tiden är ute!</h2>
+      <h3>Total poäng: {{ score }}</h3>
+      <div class="game-over-buttons">
+        <button class="againBtn" (click)="startGame()">Spela igen</button>
+        <button class="backBtn" (click)="backToStart()">Tillbaka till start</button>
+      </div>
+    </div>
+  </div>`,
+  styleUrls: ['./guess-game.scss'],
 })
 export class GuessGameComponent implements OnDestroy {
   currentWord: string = '';
@@ -59,6 +57,7 @@ export class GuessGameComponent implements OnDestroy {
   duration: number = 60;
   timeLeft: number = this.duration;
   timer!: ReturnType<typeof setInterval>;
+  remainingWords: WordWithHint[] = [];
 
   constructor(private cdr: ChangeDetectorRef) {}
 
@@ -67,6 +66,7 @@ export class GuessGameComponent implements OnDestroy {
     this.gameOver = false;
     this.score = 0;
     this.timeLeft = this.duration;
+    this.remainingWords = [...wordsWithHints];
     this.getNextWord();
     this.startTimer();
   }
@@ -87,8 +87,11 @@ export class GuessGameComponent implements OnDestroy {
   }
 
   getNextWord(): void {
+    if (this.remainingWords.length === 0) {
+      this.remainingWords = [...wordsWithHints];
+    }
     const randomIndex = Math.floor(Math.random() * wordsWithHints.length);
-    const wordObj = wordsWithHints[randomIndex];
+    const wordObj = this.remainingWords.splice(randomIndex, 1)[0];
     this.currentWord = wordObj.word;
     this.currentHint = ''; // göm hint tills spelaren ber om den
   }
@@ -103,9 +106,7 @@ export class GuessGameComponent implements OnDestroy {
   }
 
   showHint(): void {
-    const found: WordWithHint | undefined = wordsWithHints.find(
-      w => w.word === this.currentWord
-    );
+    const found: WordWithHint | undefined = wordsWithHints.find((w) => w.word === this.currentWord);
     if (found) {
       this.currentHint = found.hint;
     }
